@@ -130,18 +130,18 @@ class ESClusterStatus < Sensu::Plugin::Check::CLI
              else
                get_es_resource('/_cluster/health')
              end
-    health['status'].downcase
+    health
   end
 
   def run
     if !config[:master_only] || master?
-      case acquire_status
+      case acquire_status['status']
       when 'green'
-        ok 'Cluster is green'
+        ok "Cluster is green #{acquire_status}"
       when 'yellow'
-        warning 'Cluster is yellow'
+        warning "Cluster is yellow #{acquire_status}"
       when 'red'
-        critical 'Cluster is red'
+        critical "Cluster is red #{acquire_status}"
       end
     else
       ok 'Not the master'
